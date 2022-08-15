@@ -65,7 +65,9 @@ greeting.to_text  #=> "Hello Chris"
 greeting.to_html  #=> "<h2>Hello Chris</h2>"
 ```
 
-All instance variables for the class are available to the template by the same name, without the @ sign. This is how the `@name` ivar was able to be passed in where the template listed `name` in the example above. In addition, the `Context` for the template is an instance variable, allowing the class to add any value to it, including method outputs. Please see the [liquid.cr](https://github.com/TechMagister/liquid.cr) repository for the allowable types for `Liquid::Any`.
+All instance variables for the class are available to the template by the same name, without the @ sign. This is how the `@name` ivar was able to be passed in where the template listed `name` in the example above.
+
+In addition, the `Context` for the template is an instance variable, allowing the class to add any value to it, including method outputs. Please see the [liquid.cr](https://github.com/TechMagister/liquid.cr) repository for the allowable types for `Liquid::Any`.
 
 ### Rendering Other Templates
 
