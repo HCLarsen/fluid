@@ -33,6 +33,9 @@ class Greeting < Fluid::Document
   include Fluid::Textable
 
   @@text_template_source = "Hello {{name}}"
+
+  def initialize(@name : String)
+  end
 end
 ```
 

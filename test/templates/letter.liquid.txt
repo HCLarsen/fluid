@@ -1,0 +1,10 @@
+{{ date }}
+
+{{ render_greeting }},
+
+Please see the data that you requested:
+
+{% for row in render_data_rows %}{{row}}
+{% endfor %}
+
+{{ render_signature }}
