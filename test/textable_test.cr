@@ -4,7 +4,7 @@ require "liquid"
 
 require "/../src/fluid/textable"
 
-class Greeting
+class TextGreeting
   include Fluid::Textable
 
   @@text_template_source = "Hello {{name}}"
@@ -13,7 +13,7 @@ class Greeting
   end
 end
 
-class Signature
+class TextSignature
   include Fluid::Textable
 
   @@text_template_source = File.open("#{__DIR__}/templates/signature.liquid.txt")
@@ -22,7 +22,7 @@ class Signature
   end
 end
 
-class DataRow
+class TextDataRow
   include Fluid::Textable
 
   @@text_template_source = "{{date_string}} - {{value}}"
@@ -35,54 +35,54 @@ class DataRow
   end
 end
 
-class Letter
+class TextLetter
   include Fluid::Textable
 
   @@text_template_source = File.open("#{__DIR__}/templates/letter.liquid.txt")
 
   @[Fluid::Partial]
-  @greeting : Greeting
+  @greeting : TextGreeting
 
   @[Fluid::Partial]
-  @signature : Signature
+  @signature : TextSignature
 
   @[Fluid::Partial]
-  @data_rows : Array(DataRow)
+  @data_rows : Array(TextDataRow)
 
   def initialize(@to : String, @from : String)
-    @greeting = Greeting.new(@to.split[0])
-    @signature = Signature.new(@from)
+    @greeting = TextGreeting.new(@to.split[0])
+    @signature = TextSignature.new(@from)
 
     @data_rows = [
-      DataRow.new(Time.local(2022, 8, 4), 16),
-      DataRow.new(Time.local(2022, 8, 5), 13),
-      DataRow.new(Time.local(2022, 8, 6), 22),
-      DataRow.new(Time.local(2022, 8, 7), 18)
+      TextDataRow.new(Time.local(2022, 8, 4), 16),
+      TextDataRow.new(Time.local(2022, 8, 5), 13),
+      TextDataRow.new(Time.local(2022, 8, 6), 22),
+      TextDataRow.new(Time.local(2022, 8, 7), 18)
     ]
   end
 end
 
 class TextableTest < Minitest::Test
   def test_generates_text_output_from_string_template
-    greeting = Greeting.new("World!")
+    greeting = TextGreeting.new("World!")
 
     assert_equal "Hello World!", greeting.to_text
   end
 
   def test_generates_text_output_from_file_template
-    signature = Signature.new("Chris Larsen")
+    signature = TextSignature.new("Chris Larsen")
 
     assert_equal "Regards,\nChris Larsen", signature.to_text
   end
 
   def test_before_output_hook
-    data = DataRow.new(Time.local(2022, 8, 4), 16)
+    data = TextDataRow.new(Time.local(2022, 8, 4), 16)
 
     assert_equal "2022/08/04 - 16", data.to_text
   end
 
   def test_includes_other_documents
-    letter = Letter.new("Chris Larsen", "John Smith")
+    letter = TextLetter.new("Chris Larsen", "John Smith")
     text = letter.to_text
 
     assert_equal "Hello Chris,", text.lines[0]
