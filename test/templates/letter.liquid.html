@@ -1,0 +1,10 @@
+{{ render_greeting }},
+
+<p>Please see the data that you requested:</p>
+
+<ul>
+{% for row in render_data_rows %}<li>{{row}}</li>
+{% endfor %}
+</ul>
+
+{{ render_signature }}
