@@ -1,7 +1,5 @@
 require "minitest/autorun"
 
-require "liquid"
-
 require "/../src/fluid/htmlable"
 
 class HTMLGreeting

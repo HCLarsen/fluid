@@ -1,3 +1,5 @@
+require "liquid"
+
 require "../fluid"
 
 module Fluid::Textable

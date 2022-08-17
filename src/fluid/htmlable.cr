@@ -1,5 +1,7 @@
 require "liquid"
 
+require "../fluid"
+
 module Fluid::HTMLable
   macro included
     @context = Liquid::Context.new
