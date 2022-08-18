@@ -85,10 +85,13 @@ class HTMLableTest < Minitest::Test
     letter = HTMLLetter.new("Chris Larsen", "John Smith")
     text = letter.to_html
 
+    # Test that the rest of the HTML structure is there, such as <body> and <!doctype> tags.
+
     lexbor = Lexbor::Parser.new(letter.to_html)
 
     assert_equal "Hello Chris", lexbor.css(".salutation").first.inner_text
     assert_equal "Please see the data that you requested:", lexbor.css(".paragraph").first.inner_text
+    assert_equal "John Smith", lexbor.css(".name").first.inner_text
 
     data_rows = lexbor.css(".list-item")
     assert_equal 4, data_rows.size
@@ -96,6 +99,27 @@ class HTMLableTest < Minitest::Test
     assert_equal "2022/08/05 - 13", data_rows[1].inner_text
     assert_equal "2022/08/06 - 22", data_rows[2].inner_text
     assert_equal "2022/08/07 - 18", data_rows[3].inner_text
-    assert_equal "John Smith", lexbor.css(".name").first.inner_text
   end
+
+  def test_exports_full_html_doc
+    letter = HTMLLetter.new("Chris Larsen", "John Smith")
+    html = letter.to_html
+    doc = letter.to_html_doc
+
+    refute html.starts_with?("<!DOCTYPE html><html>")
+    assert doc.starts_with?("<!DOCTYPE html><html>")
+
+    refute html.ends_with?("</body></html>")
+    assert doc.ends_with?("</body></html>")
+  end
+
+  def test_exports_unminified_html
+    letter = HTMLLetter.new("Chris Larsen", "John Smith")
+    unminified = letter.to_html_doc(false)
+
+    assert unminified.starts_with?("<!DOCTYPE html>\n<html>")
+    assert unminified.ends_with?("</body>\n</html>")
+  end
+
+  # Add CSS to html, and test that it's there, as well as some other <head> tags.
 end

@@ -3,6 +3,18 @@ require "liquid"
 require "../fluid"
 
 module Fluid::HTMLable
+  HTML_DOC_TEMPLATE = <<-STRING
+  <!DOCTYPE html>
+  <html>
+  <head>
+    {{html_head}}
+  </head>
+  <body>
+    {{html_body}}
+  </body>
+  </html>
+  STRING
+
   macro included
     @context = Liquid::Context.new
 
@@ -25,6 +37,10 @@ module Fluid::HTMLable
     {% end %}
   end
 
+  def minify_html(html : String) : String
+    html.gsub(/\n\s*/m, "")
+  end
+
   def before_to_html
   end
 
@@ -34,5 +50,20 @@ module Fluid::HTMLable
     before_to_html
 
     @@html_template.render(@context).strip
+  end
+
+  def to_html_doc(minify = true) : String
+    context = Liquid::Context.new
+    context.set("html_body", to_html)
+
+    doc_template = Liquid::Parser.parse(HTML_DOC_TEMPLATE)
+
+    html = doc_template.render(context).strip
+
+    if minify
+      return minify_html(html)
+    else
+      return html
+    end
   end
 end
