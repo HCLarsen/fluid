@@ -101,7 +101,6 @@ class HTMLableTest < Minitest::Test
 
   def test_includes_other_documents
     letter = HTMLLetter.new("Chris Larsen", "John Smith")
-    text = letter.to_html
 
     lexbor = Lexbor::Parser.new(letter.to_html)
 

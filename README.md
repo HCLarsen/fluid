@@ -2,11 +2,9 @@
 
 Fluid is a document generating system that uses Shopify's [Liquid](http://shopify.github.io/liquid/) templating language.
 
-**NOTE:** This shard is currently a Work in Progress for 2 reasons. First, it heavily depends on [liquid.cr](https://github.com/TechMagister/liquid.cr) which is also marked as WIP. Second, I'm still developing how the interface for the classes and mixins will work, so breakign changes should be expected. During this time, I welcome any feedback on what would be most useful to the community.
+**NOTE:** This shard is currently a Work in Progress for 2 reasons. First, it heavily depends on [liquid.cr](https://github.com/TechMagister/liquid.cr) which is also marked as WIP. Second, I'm still developing how the interface for the classes and mixins will work, so breaking changes should be expected. During this time, I welcome any feedback on what would be most useful to the community.
 
-The abstract `Document` class provides the basis for this functionality. From there, a document can make use of multiple Liquid templates to provide outputs in various formats.
-
-Mixins can be used to simplify the process of outputting in multiple formats. Mixins for common formats, such as text and HTML, are provided. Other mixins can easily be developed based on these examples.
+Fluid uses mixins to parse and render Liquid templates for classes. Common types, such as `HTMLable` and `Textable` are already provided, and others can easily be added to extend the capabilities of Fluid.
 
 ## Installation
 
@@ -49,15 +47,15 @@ class Greeting < Fluid::Document
 end
 ```
 
-Mixins such as `Fluid::Textable` and `Fluid::HTMLable` automatically provide the basic variables and methods needed to generate and output the document type required. They can also be used together, so that one document can have multiple outputs.
+Multiple mixins can be used in the same class, to provide multiple output options for a single class.
 
 ```crystal
-class Greeting < Fluid::Document
+class Greeting
   include Fluid::Textable
   include Fluid::HTMLable
 
   @@text_template_source = "Hello {{name}}"
-  @@html_template_source = "<h2>Hello {{name}}</h2>"
+  @@html_template_source = %(<p class="salutation">Hello {{name}}</p>)
 
   def initialize(@name : String)
   end
@@ -65,10 +63,10 @@ end
 
 greeting = Greeting.new("Chris")
 greeting.to_text  #=> "Hello Chris"
-greeting.to_html  #=> "<h2>Hello Chris</h2>"
+greeting.to_html  #=> "<p class=\"salutation\">Hello World!</p>"
 ```
 
-All instance variables for the class are available to the template by the same name, without the @ sign. This is how the `@name` ivar was able to be passed in where the template listed `name` in the example above. In addition, the `Context` for the template is an instance variable, allowing the class to add any value to it, including method outputs. Please see the [liquid.cr](https://github.com/TechMagister/liquid.cr) repository for the allowable types for `Liquid::Any`.
+All instance variables for the class are available to the template by the same name, without the @ sign. This is how the `@name` ivar was able to be passed in where the template listed `name` in the example above. In addition, the `Context` for the template is an instance variable, allowing anything to be added to it through the lifecycle of the object. Please see the [liquid.cr](https://github.com/TechMagister/liquid.cr) repository for the allowable types for `Liquid::Any`.
 
 ### Rendering Other Templates
 

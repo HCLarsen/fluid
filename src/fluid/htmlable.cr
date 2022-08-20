@@ -28,7 +28,7 @@ module Fluid::HTMLable
     end
   end
 
-  def set_ivars_in_context : Nil
+  def add_ivars_to_html_context : Nil
     {% for var in @type.instance_vars %}
       {% ann = var.annotation(Fluid::Partial) %}
       {% unless ann %}
@@ -79,7 +79,7 @@ module Fluid::HTMLable
   end
 
   def to_html : String
-    set_ivars_in_context
+    add_ivars_to_html_context
 
     before_to_html
 

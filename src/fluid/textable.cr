@@ -10,7 +10,7 @@ module Fluid::Textable
     @@text_template : Liquid::Template = Liquid::Parser.parse(@@text_template_source)
   end
 
-  def set_ivars_in_context : Nil
+  def add_ivars_to_text_context : Nil
     {% for var in @type.instance_vars %}
       {% ann = var.annotation(Fluid::Partial) %}
       {% unless ann %}
@@ -29,7 +29,7 @@ module Fluid::Textable
   end
 
   def to_text : String
-    set_ivars_in_context
+    add_ivars_to_text_context
 
     before_to_text
 
