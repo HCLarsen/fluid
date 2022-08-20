@@ -15,11 +15,17 @@ module Fluid::HTMLable
   </html>
   STRING
 
+  @@css : String?
+
   macro included
     @context = Liquid::Context.new
 
     @@html_template_source : String | File
     @@html_template : Liquid::Template = Liquid::Parser.parse(@@html_template_source)
+
+    def self.css : String?
+      @@css
+    end
   end
 
   def set_ivars_in_context : Nil
@@ -37,8 +43,36 @@ module Fluid::HTMLable
     {% end %}
   end
 
-  def minify_html(html : String) : String
-    html.gsub(/\n\s*/m, "")
+  def css : String?
+    @@css
+  end
+
+  def html_head : String
+    style = ""
+    {% for var in @type.instance_vars %}
+      {% ann = var.annotation(Fluid::Partial) %}
+      {% if ann %}
+        {% if var.type <= Array %}
+          if partial_css = @{{var.id}}.first.class.css
+            style += "\n" + partial_css
+          end
+        {% else %}
+          if partial_css = {{var.type.id}}.css
+            style += "\n" + partial_css
+          end
+        {% end %}
+      {% end %}
+    {% end %}
+
+    if local_css = @@css
+      style += "\n" + local_css
+    end
+
+    <<-HEREDOC
+    <style>
+      #{minify_css(style)}
+    </style>
+    HEREDOC
   end
 
   def before_to_html
@@ -55,6 +89,7 @@ module Fluid::HTMLable
   def to_html_doc(minify = true) : String
     context = Liquid::Context.new
     context.set("html_body", to_html)
+    context.set("html_head", html_head)
 
     doc_template = Liquid::Parser.parse(HTML_DOC_TEMPLATE)
 
@@ -65,5 +100,13 @@ module Fluid::HTMLable
     else
       return html
     end
+  end
+
+  def minify_html(html : String) : String
+    html.gsub(/\n\s*/m, "")
+  end
+
+  def minify_css(css : String) : String
+    css.gsub(/\n\s*/m, "").gsub(/:\s/, ":").gsub(/\s{/, "{")
   end
 end

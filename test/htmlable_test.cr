@@ -16,6 +16,12 @@ end
 class HTMLSignature
   include Fluid::HTMLable
 
+  @@css = <<-HEREDOC
+  .name {
+    font-style: italic;
+  }
+  HEREDOC
+
   @@html_template_source = File.open("#{__DIR__}/templates/signature.liquid.html")
 
   def initialize(@name : String)
@@ -25,7 +31,13 @@ end
 class HTMLDataRow
   include Fluid::HTMLable
 
-  @@html_template_source = "<p>{{date_string}} - {{value}}</p>"
+  @@html_template_source = %(<p>{{date_string}} - <span class="value">{{value}}</span></p>)
+
+  @@css = <<-HEREDOC
+  .value {
+    font-style: italic;
+  }
+  HEREDOC
 
   def initialize(@date : Time, @value : Int32)
   end
@@ -39,6 +51,12 @@ class HTMLLetter
   include Fluid::HTMLable
 
   @@html_template_source = File.open("#{__DIR__}/templates/letter.liquid.html")
+
+  @@css = <<-HEREDOC
+  ul.list {
+    list-style: none;
+  }
+  HEREDOC
 
   @[Fluid::Partial]
   @greeting : HTMLGreeting
@@ -78,14 +96,12 @@ class HTMLableTest < Minitest::Test
   def test_before_output_hook
     data = HTMLDataRow.new(Time.local(2022, 8, 4), 16)
 
-    assert_equal "<p>2022/08/04 - 16</p>", data.to_html
+    assert_equal %(<p>2022/08/04 - <span class="value">16</span></p>), data.to_html
   end
 
   def test_includes_other_documents
     letter = HTMLLetter.new("Chris Larsen", "John Smith")
     text = letter.to_html
-
-    # Test that the rest of the HTML structure is there, such as <body> and <!doctype> tags.
 
     lexbor = Lexbor::Parser.new(letter.to_html)
 
@@ -119,6 +135,29 @@ class HTMLableTest < Minitest::Test
 
     assert unminified.starts_with?("<!DOCTYPE html>\n<html>")
     assert unminified.ends_with?("</body>\n</html>")
+  end
+
+  def test_exports_raw_css
+    signature = HTMLSignature.new("Chris Larsen")
+
+    expected = <<-HEREDOC
+    .name {
+      font-style: italic;
+    }
+    HEREDOC
+
+    assert_equal expected, signature.css
+  end
+
+  def test_includes_minified_css_in_html_head
+    letter = HTMLLetter.new("Chris Larsen", "John Smith")
+
+    lexbor = Lexbor::Parser.new(letter.to_html_doc)
+    head = lexbor.css("head").first
+
+    assert_includes head.inner_text, "ul.list{list-style:none;}"
+    assert_includes head.inner_text, ".name{font-style:italic;}"
+    assert_includes head.inner_text, ".value{font-style:italic;}"
   end
 
   # Add CSS to html, and test that it's there, as well as some other <head> tags.
