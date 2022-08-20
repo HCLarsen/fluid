@@ -75,12 +75,16 @@ module Fluid::HTMLable
     HEREDOC
   end
 
+  def before_render
+  end
+
   def before_to_html
   end
 
   def to_html : String
     add_ivars_to_html_context
 
+    before_render
     before_to_html
 
     @@html_template.render(@context).strip

@@ -25,12 +25,16 @@ module Fluid::Textable
     {% end %}
   end
 
+  def before_render
+  end
+
   def before_to_text
   end
 
   def to_text : String
     add_ivars_to_text_context
 
+    before_render
     before_to_text
 
     @@text_template.render(@context).strip

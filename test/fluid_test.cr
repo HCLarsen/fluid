@@ -35,7 +35,7 @@ class DataRow
   def initialize(@date : Time, @value : Int32)
   end
 
-  def before_to_text
+  def before_render
     @context.set("date_string", @date.to_s("%Y/%m/%d"))
   end
 end
@@ -87,8 +87,8 @@ class FluidTest < Minitest::Test
   def test_before_output_hook
     data = DataRow.new(Time.local(2022, 8, 4), 16)
 
-    assert_equal "2022/08/04 - 16", data.to_text
     assert_equal %(<p>2022/08/04 - <span class="value">16</span></p>), data.to_html
+    assert_equal "2022/08/04 - 16", data.to_text
   end
 
   def test_includes_other_documents
