@@ -47,7 +47,7 @@ module Fluid::HTMLable
     @@css
   end
 
-  def html_head : String
+  def full_css : String
     style = ""
     {% for var in @type.instance_vars %}
       {% ann = var.annotation(Fluid::Partial) %}
@@ -68,9 +68,19 @@ module Fluid::HTMLable
       style += "\n" + local_css
     end
 
+    style
+  end
+
+  def html_head(minify : Bool) : String
+    style = full_css
+
+    if minify
+      style = minify_css(style)
+    end
+
     <<-HEREDOC
     <style>
-      #{minify_css(style)}
+      #{style}
     </style>
     HEREDOC
   end
@@ -93,7 +103,7 @@ module Fluid::HTMLable
   def to_html_doc(minify = true) : String
     context = Liquid::Context.new
     context.set("html_body", to_html)
-    context.set("html_head", html_head)
+    context.set("html_head", html_head(minify))
 
     doc_template = Liquid::Parser.parse(HTML_DOC_TEMPLATE)
 
@@ -106,11 +116,11 @@ module Fluid::HTMLable
     end
   end
 
-  def minify_html(html : String) : String
+  private def minify_html(html : String) : String
     html.gsub(/\n\s*/m, "")
   end
 
-  def minify_css(css : String) : String
+  private def minify_css(css : String) : String
     css.gsub(/\n\s*/m, "").gsub(/:\s/, ":").gsub(/\s{/, "{")
   end
 end
