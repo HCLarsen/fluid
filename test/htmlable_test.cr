@@ -149,16 +149,31 @@ class HTMLableTest < Minitest::Test
     assert_equal expected, signature.css
   end
 
-  def test_includes_minified_css_in_html_head
+  def test_includes_css_in_html_head
     letter = HTMLLetter.new("Chris Larsen", "John Smith")
 
     lexbor = Lexbor::Parser.new(letter.to_html_doc)
     head = lexbor.css("head").first
 
     assert_includes head.inner_text, "ul.list{list-style:none;}"
+  end
+
+  def test_includes_css_of_partials
+    letter = HTMLLetter.new("Chris Larsen", "John Smith")
+
+    lexbor = Lexbor::Parser.new(letter.to_html_doc)
+    head = lexbor.css("head").first
+
     assert_includes head.inner_text, ".name{font-style:italic;}"
     assert_includes head.inner_text, ".value{font-style:italic;}"
   end
 
-  # Add CSS to html, and test that it's there, as well as some other <head> tags.
+  def test_parent_css_is_after_partial_css
+    letter = HTMLLetter.new("Chris Larsen", "John Smith")
+
+    lexbor = Lexbor::Parser.new(letter.to_html_doc)
+    head = lexbor.css("head").first.inner_text
+
+    assert head.index("ul.list{list-style:none;}").not_nil! > head.index(".value{font-style:italic;}").not_nil!
+  end
 end
