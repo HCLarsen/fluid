@@ -23,6 +23,7 @@ module Fluid::HTMLable
     @@html_template_source : String | File
     @@html_template : Liquid::Template = Liquid::Parser.parse(@@html_template_source)
 
+    # Returns the unminified CSS for this class.
     def self.css : String?
       @@css
     end
@@ -43,10 +44,12 @@ module Fluid::HTMLable
     {% end %}
   end
 
+  # Returns the unminified CSS for this document.
   def css : String?
     @@css
   end
 
+  # Returns the CSS for this document and all included partials.
   def full_css : String
     style = ""
     {% for var in @type.instance_vars %}
@@ -71,6 +74,7 @@ module Fluid::HTMLable
     style
   end
 
+  # Returns the contents of the <head> element for the html output.
   def html_head(minify : Bool) : String
     style = full_css
 
@@ -85,12 +89,18 @@ module Fluid::HTMLable
     HEREDOC
   end
 
+  # A hook that is executed during the output of any `Fluid` mixin. Unlike '#before_to_text', this hook is called during all `Fluid` mixin output methods.
   def before_render
   end
 
+  # A hook that is executing during the `#to_html` method.
   def before_to_html
   end
 
+  # Generates and returns the html output of the document.
+  #
+  # Executes 2 hooks, `#before_render` and `#before_to_html`, in that order.
+  #
   def to_html : String
     add_ivars_to_html_context
 
@@ -100,6 +110,17 @@ module Fluid::HTMLable
     @@html_template.render(@context).strip
   end
 
+  # Generates and returns a complete HTML document with the output from `#to_html` forming the <body> element.
+  #
+  # For example:
+  # ```
+  # greeting.to_html      #=> %(<p class="salutation">Hello {{name}}</p>)
+  # greeting.to_html_doc  #=> %(<!DOCTYPE html><html><head><style>.salutation{font-style:italic;}</style></head><body><p class="salutation">Hello {{name}}</p></body></html>)
+  #
+  # ```
+  #
+  # Like `#to_html`, this method executes the `#before_render` and `#before_to_html` hooks, in that order.
+  #
   def to_html_doc(minify = true) : String
     context = Liquid::Context.new
     context.set("html_body", to_html)

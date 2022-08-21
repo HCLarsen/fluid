@@ -4,7 +4,7 @@ Fluid is a document generating system that uses Shopify's [Liquid](http://shopif
 
 **NOTE:** This shard is currently a Work in Progress for 2 reasons. First, it heavily depends on [liquid.cr](https://github.com/TechMagister/liquid.cr) which is also marked as WIP. Second, I'm still developing how the interface for the classes and mixins will work, so breaking changes should be expected. During this time, I welcome any feedback on what would be most useful to the community.
 
-Fluid uses mixins to parse and render Liquid templates for classes. Common types, such as `HTMLable` and `Textable` are already provided, and others can easily be added to extend the capabilities of Fluid.
+Fluid uses mixins to parse and render Liquid templates for classes. Common types, such as `HTMLable` and `Textable` are already provided, and others can easily be created to extend the capabilities of Fluid.
 
 ## Installation
 
@@ -20,13 +20,11 @@ Fluid uses mixins to parse and render Liquid templates for classes. Common types
 
 ## Usage
 
-```crystal
-require "fluid"
-```
-
 The Liquid template for a Document can either be provided as a string, or from an external file. If neither one is provided for all the required templates, a compile time error will occur.
 
 ```crystal
+require "fluid"
+
 class Greeting < Fluid::Document
   include Fluid::Textable
 
