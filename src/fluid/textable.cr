@@ -1,6 +1,4 @@
-require "liquid"
-
-require "../fluid"
+require "./common"
 
 # The `Fluid::Textable` mixin automatically generates methods to generate text output of a report. As text documents have no special formatting, it's the simplest `Fluid` mixin.
 #

@@ -1,3 +1,7 @@
+require "liquid"
+require "./fluid/htmlable"
+require "./fluid/textable"
+
 # Fluid is a document generating system that uses Shopify's [Liquid](http://shopify.github.io/liquid/) templating language.
 
 # **NOTE:** This shard is currently a Work in Progress for 2 reasons. First, it heavily depends on [liquid.cr](https://github.com/TechMagister/liquid.cr) which is also marked as WIP. Second, I'm still developing how the interface for the classes and mixins will work, so breaking changes should be expected. During this time, I welcome any feedback on what would be most useful to the community.
@@ -67,7 +71,4 @@
 # ```
 module Fluid
   VERSION = "0.1.0"
-
-  annotation Partial
-  end
 end

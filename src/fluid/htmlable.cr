@@ -1,6 +1,4 @@
-require "liquid"
-
-require "../fluid"
+require "./common"
 
 module Fluid::HTMLable
   HTML_DOC_TEMPLATE = <<-STRING
