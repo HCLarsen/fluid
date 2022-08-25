@@ -58,13 +58,13 @@ class HTMLLetter
   }
   HEREDOC
 
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @greeting : HTMLGreeting
 
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @signature : HTMLSignature
 
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @data_rows : Array(HTMLDataRow)
 
   def initialize(@to : String, @from : String)

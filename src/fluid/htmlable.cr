@@ -27,12 +27,12 @@ module Fluid::HTMLable
     end
   end
 
-  def add_ivars_to_html_context : Nil
+  private def add_ivars_to_html_context : Nil
     {% for var in @type.instance_vars %}
-      {% ann = var.annotation(Fluid::Partial) %}
-      {% unless ann %}
+      {% ann = var.annotation(Fluid::Context) %}
+      {% if !ann %}
         @context.set {{var.id.stringify}}, @{{var.id}}
-      {% else %}
+      {% elsif ann[:partial] == true %}
         {% if var.type <= Array %}
           @context.set "render_{{var.id}}", @{{var.id}}.map { |e| e.to_html  }
         {% else %}
@@ -51,7 +51,7 @@ module Fluid::HTMLable
   def full_css : String
     style = ""
     {% for var in @type.instance_vars %}
-      {% ann = var.annotation(Fluid::Partial) %}
+      {% ann = var.annotation(Fluid::Context) %}
       {% if ann %}
         {% if var.type <= Array %}
           if partial_css = @{{var.id}}.first.class.css

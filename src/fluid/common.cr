@@ -1,6 +1,6 @@
 require "liquid"
 
 module Fluid
-  annotation Partial
+  annotation Context
   end
 end

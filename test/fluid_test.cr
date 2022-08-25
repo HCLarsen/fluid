@@ -47,13 +47,13 @@ class Letter
   @@text_template_source = File.open("#{__DIR__}/templates/letter.liquid.txt")
   @@html_template_source = File.open("#{__DIR__}/templates/letter.liquid.html")
 
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @greeting : Greeting
 
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @signature : Signature
 
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @data_rows : Array(DataRow)
 
   def initialize(@to : String, @from : String)

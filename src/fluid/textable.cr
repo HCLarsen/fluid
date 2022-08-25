@@ -33,10 +33,10 @@ module Fluid::Textable
 
   private def add_ivars_to_text_context : Nil
     {% for var in @type.instance_vars %}
-      {% ann = var.annotation(Fluid::Partial) %}
-      {% unless ann %}
+      {% ann = var.annotation(Fluid::Context) %}
+      {% if !ann %}
         @context.set {{var.id.stringify}}, @{{var.id}}
-      {% else %}
+      {% elsif ann[:partial] == true %}
         {% if var.type <= Array %}
           @context.set "render_{{var.id}}", @{{var.id}}.map { |e| e.to_text  }
         {% else %}

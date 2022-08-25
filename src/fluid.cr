@@ -52,12 +52,18 @@ require "./fluid/textable"
 # greeting.to_html  #=> "<p class=\"salutation\">Hello World!</p>"
 # ```
 #
-# All instance variables for the class are available to the template by the same name, without the @ sign. This is how the `@name` ivar was able to be passed in where the template listed `name` in the example above. In addition, the `Context` for the template is an instance variable, allowing anything to be added to it through the lifecycle of the object. Please see the [liquid.cr](https://github.com/TechMagister/liquid.cr) repository for the allowable types for `Liquid::Any`.
-
-
+# By default, all instance variables for the class are available to the template by the same name, without the @ sign. This is how the `@name` ivar was able to be passed in where the template listed `name` in the example above. In addition, the `Context` for the template is an instance variable, allowing anything to be added to it through the lifecycle of the object. Please see the [liquid.cr](https://github.com/TechMagister/liquid.cr) repository for the allowable types for `Liquid::Any`.
+#
+# This default behaviour can be overriden with the `Fluid::Context` annotation.
+#
+# Fluid::Context properties:
+#
+# * **partial**: this instance variable describes an instance of another `Fluid` document. This must be included on all sub-documents in order for them to be rendered properly.
+# * **ignore**: if `true` skip this field in serialization and deserialization (by default false)
+#
 # ### Rendering Other Templates
 #
-# Currently, Fluid doesn't allow for use of Liquid's [render](https://shopify.github.io/liquid/tags/template/#render) command. However, any Document can be included in any other Document as a partial, provided that the included Document has the right output format. This is done by initializing the included Document, and using the `Fluid::Partial` annotation. This adds a variable to the context with a name of `render_xxx` where `xxx` is the name of the Document's class. For instance, the example below will provide a `render_greeting` value to be used in the Letter template.
+# Currently, Fluid doesn't allow for use of Liquid's [render](https://shopify.github.io/liquid/tags/template/#render) command. However, any Document can be included in any other Document as a partial, provided that the included Document has the right output format. This is done by initializing the included Document, and using the `Fluid::Context` annotation. This adds a variable to the context with a name of `render_xxx` where `xxx` is the name of the Document's class. For instance, the example below will provide a `render_greeting` value to be used in the Letter template.
 #
 # ```crystal
 # class Letter < Fluid::Document
@@ -65,7 +71,7 @@ require "./fluid/textable"
 #
 #   @@text_template_source = File.open("#{__DIR__}/templates/letter.liquid.txt")
 #
-#   @[LiquidPlay::Partial]
+#   @[LiquidPlay::Context]
 #   @greeting : Greeting
 # end
 # ```

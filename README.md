@@ -68,7 +68,7 @@ All instance variables for the class are available to the template by the same n
 
 ### Rendering Other Templates
 
-Currently, Fluid doesn't allow for use of Liquid's [render](https://shopify.github.io/liquid/tags/template/#render) command. However, any Document can be included in any other Document as a partial, provided that the included Document has the right output format. This is done by initializing the included Document, and using the `Fluid::Partial` annotation. This adds a variable to the context with a name of `render_xxx` where `xxx` is the name of the Document's class. For instance, the example below will provide a `render_greeting` value to be used in the Letter template.
+Currently, Fluid doesn't allow for use of Liquid's [render](https://shopify.github.io/liquid/tags/template/#render) command. However, any Document can be included in any other Document as a partial, provided that the included Document has the right output format. This is done by initializing the included Document, and using the `Fluid::Context` annotation. This adds a variable to the context with a name of `render_xxx` where `xxx` is the name of the Document's class. For instance, the example below will provide a `render_greeting` value to be used in the Letter template.
 
 ```crystal
 class Letter < Fluid::Document
@@ -76,7 +76,7 @@ class Letter < Fluid::Document
 
   @@text_template_source = File.open("#{__DIR__}/templates/letter.liquid.txt")
 
-  @[LiquidPlay::Partial]
+  @[LiquidPlay::Context]
   @greeting : Greeting
 end
 ```

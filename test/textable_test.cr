@@ -1,5 +1,7 @@
 require "minitest/autorun"
 
+require "uri"
+
 require "/../src/fluid/textable"
 
 class TextGreeting
@@ -38,16 +40,20 @@ class TextLetter
 
   @@text_template_source = File.open("#{__DIR__}/templates/letter.liquid.txt")
 
-  @[Fluid::Partial]
+  @to : String
+  @from : String
+
+  @[Fluid::Context(ignore: true)]
+  @uri : URI?
+
+  @[Fluid::Context(partial: true)]
   @greeting : TextGreeting
-
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @signature : TextSignature
-
-  @[Fluid::Partial]
+  @[Fluid::Context(partial: true)]
   @data_rows : Array(TextDataRow)
 
-  def initialize(@to : String, @from : String)
+  def initialize(@to, @from, @uri = nil)
     @greeting = TextGreeting.new(@to.split[0])
     @signature = TextSignature.new(@from)
 
